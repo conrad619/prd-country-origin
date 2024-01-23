@@ -1,0 +1,20 @@
+{
+  "name": "bms-dashboard-country",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.5",
+    "cheerio": "^1.0.0-rc.12",
+    "country-codes-list": "^1.6.11",
+    "html-to-text": "^9.0.5",
+    "puppeteer": "^21.7.0",
+    "world_countries_lists": "^2.8.2"
+  }
+}
