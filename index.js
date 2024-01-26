@@ -19,6 +19,7 @@ const englishLinks = require('./englishLinks').links;
 const deadSites = [];
 const marketPlaceFoundCountry = []
 const marketPlaceNotFoundCountry = []
+const productNotFound = []
 
 
 // Create a function to get the marketplace information based on the URL
@@ -47,19 +48,29 @@ async function classifyURL(url) {
     evaluated = await marketPlace.evaluate(url);
   } catch (error) {
     console.log(error)
-    deadSites.push(url);
+    if(error==503){
+      productNotFound.push(url)
+    }else{
+      deadSites.push(url);
+    }
   }
   console.log("----------------------------------------------------------")
 
   if (evaluated) {
-    marketPlaceFoundCountry.push([url,evaluated]);
+    if(evaluated == "product not found"){
+      productNotFound.push(url)
+    }else if(evaluated == "country not found"){
+      marketPlaceNotFoundCountry.push(url)
+    }else{
+      marketPlaceFoundCountry.push([url,evaluated]);
+    }
   }
 
 }
 
 async function classifyURLs(urls, concurrentLimit) {
   let links = urls.links
-  for(let i=0;i<links.length;i++){
+  for(let i=0;i<concurrentLimit;i++){
     await classifyURL(links[i])
   }
   // console.log(urls)
@@ -70,11 +81,13 @@ async function classifyURLs(urls, concurrentLimit) {
 (async () => {
   console.log("evaluating") 
   // await MarketPlaceEvaluator.DEFAULT.evaluate(englishLinks[0])
-  await classifyURLs(links)
+  await classifyURLs(links,10)
   console.log("found country")
   console.log(marketPlaceFoundCountry)
   console.log("country notfound")
   console.log(marketPlaceNotFoundCountry)
+  console.log("product notfound")
+  console.log(productNotFound)
   console.log("dead sites")
   console.log(deadSites)
   

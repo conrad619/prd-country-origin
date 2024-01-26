@@ -119,6 +119,16 @@ class MarketPlaceEvaluator {
       return await evaluateMarketPlace(url,this)
     }
   }
+
+  static GLOBALSOURCES = {
+    TARGET: ['Production Country','origin'],
+    MESSAGES: ['no longer available', 'home page', 'error','404'],
+    RANGE : 100,
+    marketplaceQuery: 'globalsources',
+    async evaluate(url){
+      return await evaluateMarketPlace(url,this)
+    }
+  }
 }
 
 // console.log(countries[0])
@@ -145,7 +155,7 @@ async function evaluateMarketPlace(url,info){
     
     let foundCountry = ""
     const value = getTargetFieldValue(text,target,findRange)
-    // console.log(value)
+    console.log(value)
     if(value){
       console.log("got target field")
       // console.log(value)
@@ -154,30 +164,38 @@ async function evaluateMarketPlace(url,info){
         //check for country
         //check for alpha 2
         //check for alpha 3
-        // console.log(country)
-        if(value.indexOf(country.name.toLowerCase()) >= 0 ||
-        value.indexOf(country.alpha2.toLowerCase()) >= 0 ||
-        value.indexOf(country.alpha3.toLowerCase()) >= 0){
+        console.log(country)
+        // if(value.indexOf(country.name.toLowerCase()) >= 0 ||
+        // value.indexOf(country.alpha2.toLowerCase()) >= 0 ||
+        // value.indexOf(country.alpha3.toLowerCase()) >= 0){
+        if(value.indexOf(country.name.toLowerCase()) >= 0){
           return true
         }else{
           return false
         }
       })
-      console.log("the country is " + foundCountry.name)
     }
 
     if(foundCountry){
+      console.log("the country is " + foundCountry.name)
       console.log("Found country")
       return foundCountry.name
     }else if(checkProductNotExist(text,targetError)){
+      // determine if product not found error message is found
       console.log("product not found")
       return "product not found"
+    }else{
+      //else no country found and error message found
+      console.log("country not found")
+      return "country not found"
     }
 
   }catch(err){
     // console.log(err)
     console.log(err.code)
-    throw err.code
+    console.log(err.response.status)
+    // console.log(err)
+    throw err.response.status
   }
 }
 
@@ -188,7 +206,7 @@ function getTargetFieldValue(text, targets, findRange = 100){
   const foundTarget = targets.some(target => {
     return (text).match(target.toLowerCase())
   })
-  // console.log("found get target "+ foundTarget)
+  console.log("found get target "+ foundTarget)
   if(foundTarget){
     
     for(let i=0;i<targets.length;i++){
